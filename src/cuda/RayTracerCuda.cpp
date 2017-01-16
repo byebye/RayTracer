@@ -64,8 +64,8 @@ void RayTracerCuda::processPixelsCuda()
   }
 
   int iX = config.imageX;
-  int iY = bitmap.rows / 2;
-  int iZ = bitmap.cols / 2;
+  int iY = bitmap.rows;
+  int iZ = bitmap.cols;
   int aA = config.antiAliasing;
   int mRL = config.maxRecursionLevel;
   float aC = config.ambientCoefficient;
