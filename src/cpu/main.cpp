@@ -1,3 +1,4 @@
+#include <chrono>
 #include <iomanip>
 #include <iostream>
 
@@ -21,6 +22,9 @@ int main(int argc, char* argv[])
   std::cerr << config;
 
   RayTracer tracer(config);
+  auto start = std::chrono::steady_clock::now();
   tracer.processPixels();
+  auto end = std::chrono::steady_clock::now();
+  std::cerr << std::chrono::duration<double, std::milli>(end - start).count() << " ms" << std::endl;
   tracer.printBitmap(std::cout);
 }
