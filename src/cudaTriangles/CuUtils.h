@@ -44,6 +44,19 @@ __device__ RGB operator+(RGB lhs, RGB rhs)
   return lhs += rhs;
 }
 
+__device__ Point& operator-=(Point& a, Point const& b)
+{
+  a.x -= b.x;
+  a.y -= b.y;
+  a.z -= b.z;
+  return a;
+}
+
+__device__ Point operator-(Point a, Point const& b)
+{
+  return a -= b;
+}
+
 __device__ float distance(Point const& a, Point const& b)
 {
   return sqrt(pow(b.x - a.x, 2) + pow(b.y - a.y, 2) + pow(b.z - a.z, 2));
@@ -83,6 +96,26 @@ __device__ Vector crossProduct(Vector const& a, Vector const& b)
   vec.y = a.z * b.x - a.x * b.z;
   vec.z = a.x * b.y - a.y * b.x;
   return vec;
+}
+
+__device__ bool intersectionBoundingBox(Segment const& segment, BoundingBox const& box)
+{
+  Vector dir = normalize(segment.b - segment.a);
+  float dirfracX = 1.0f / dir.x;
+  float dirfracY = 1.0f / dir.y;
+  float dirfracZ = 1.0f / dir.z;
+
+  float t1 = (box.vMin.x - segment.a.x) * dirfracX;
+  float t2 = (box.vMax.x - segment.a.x) * dirfracX;
+  float t3 = (box.vMin.y - segment.a.y) * dirfracY;
+  float t4 = (box.vMax.y - segment.a.y) * dirfracY;
+  float t5 = (box.vMin.z - segment.a.z) * dirfracZ;
+  float t6 = (box.vMax.z - segment.a.z) * dirfracZ;
+
+  float tmin = std::max(std::max(std::min(t1, t2), std::min(t3, t4)), std::min(t5, t6));
+  float tmax = std::min(std::min(std::max(t1, t2), std::max(t3, t4)), std::max(t5, t6));
+
+  return 0 <= tmax && tmin <= tmax;
 }
 };
 #endif // CUDA_TRIANGLES_CUUTILS_H

@@ -111,7 +111,7 @@ KdNode* KdNode::build(std::vector<Triangle> const& triangles, int depth)
 
 FindResult KdNode::findInTriangles(Segment seg, Triangle const& excludedTriangle)
 {
-  FindResult res;
+  FindResult res{};
 
   float currDist = std::numeric_limits<float>::max();
 
@@ -138,7 +138,7 @@ FindResult KdNode::findRecursive(Segment seg, Triangle const& excludedTriangle)
   FindResult const& resL = left ? left->find(seg, excludedTriangle) : FindResult{};
   FindResult const& resR = right ? right->find(seg, excludedTriangle) : FindResult{};
 
-  FindResult res;
+  FindResult res{};
   if (!resL.exists && !resR.exists)
     return res;
 
@@ -156,7 +156,7 @@ FindResult KdNode::findRecursive(Segment seg, Triangle const& excludedTriangle)
 
 FindResult KdNode::find(Segment seg, Triangle const& excludedTriangle)
 {
-  FindResult res;
+  FindResult res{};
 
   if (!intersection(seg, bb))
     return res;

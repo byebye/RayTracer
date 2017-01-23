@@ -137,6 +137,7 @@ if (CUDA_FOUND)
   set(CUDA_TRIANGLES_HEADER_FILES
       src/cudaTriangles/RayTracerCudaTriangles.h
       src/cudaTriangles/CuUtils.h
+      src/cudaTriangles/KdTreeStructures.h
       ${COMMON_HEADER_FILES})
 
   set(CUDA_TRIANGLES_CU_FILES
