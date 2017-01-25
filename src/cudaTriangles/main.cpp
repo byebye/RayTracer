@@ -4,6 +4,7 @@
 #include "common/RayTracerConfig.h"
 #include "common/Structures.h"
 #include "cudaTriangles/RayTracerCudaTriangles.h"
+#include "common/StructuresOperators.h"
 
 int main(int argc, char* argv[])
 {
