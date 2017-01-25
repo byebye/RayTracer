@@ -44,7 +44,7 @@ void RayTracerCudaTriangles::processPixelsCuda()
   cuInit(0);
 
   CUdevice cuDevice;
-  CU_CHECK(cuDeviceGet(&cuDevice, 0));
+  CU_CHECK(cuDeviceGet(&cuDevice, 1));
 
   CUcontext cuContext;
   CU_CHECK(cuCtxCreate(&cuContext, 0, cuDevice));
