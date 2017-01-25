@@ -2,32 +2,27 @@
 #define CUDA_TRIANGLES_KDTREESTRUCTURES_H
 
 #include "common/Structures.h"
+#include "common/Utils.h"
 #include "cudaTriangles/CuUtils.h"
+
 #include <vector_types.h>
 
 // a leaf node in the kd-tree
-struct Leaf
+struct LeafNode
 {
-  float triangleCount;
-  int2 firstTriangle;
-  int2 parentPointer;
+  int triangleCount;
+  int firstTriangle;
+  int parent;
 };
 
 // an internal node in the kd-tree
 struct SplitNode
 {
   float splitValue;
-  int2 leftChildPointer;
-  int2 rightChildPointer;
-  // sign bits store child type (leaf/split) and split axis
-};
-
-// further data for kd-backtrack
-struct ExtendedSplitNode
-{
-  float3 boundingBoxMin;
-  float3 boundingBoxMax;
-  float2 parentPointer;
+  // > 0 - SplitNode, < 0 - LeafNode, points to position + 1
+  int leftChild;
+  int rightChild;
+  BoundingBox bb;
 };
 
 // Per ray traversal state
