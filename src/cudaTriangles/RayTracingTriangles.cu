@@ -42,6 +42,7 @@ __device__ FindTriangleResult findTriangleLeafNode(
 {
   FindTriangleResult res{};
 
+  printf("IN LEAF %d, excluded %d\n", leafIdx, excludedTriangle);
   res.dist = FLT_MAX;
 
   LeafNode const leafNode = treeData.leafNodes[-leafIdx - 1];
@@ -71,6 +72,8 @@ __device__ FindTriangleResult findTriangleLeafNode(
 __device__ FindTriangleResult findTriangleSplitNode(
     int nodeIdx, Segment const& ray, int excludedTriangle, KdTreeData const& treeData)
 {
+  printf("IN SPLIT %d, excluded %d\n", nodeIdx, excludedTriangle);
+
   FindTriangleResult res{};
   res.dist = FLT_MAX;
 
@@ -81,7 +84,7 @@ __device__ FindTriangleResult findTriangleSplitNode(
 
   while (true)
   {
-    //printf("IN STACK %lu\n", stack.size);
+    printf("IN STACK %lu\n", stack.size);
     if (stack.size == 0)
       return res;
     currentNode = treeData.splitNodes[stack.pop() - 1];
@@ -97,7 +100,12 @@ __device__ FindTriangleResult findTriangleSplitNode(
     {
       SplitNode const& rightSplit = treeData.splitNodes[idxR - 1];
       if (intersectsBoundingBox(ray, rightSplit.bb))
+      {
+        printf("RIGHT INTERSECTS\n");
         stack.push(idxR);
+      }
+      else
+        printf("RIGTH NO INTERSECTS\n");
     }
 
     int idxL = currentNode.leftChild;
@@ -111,7 +119,12 @@ __device__ FindTriangleResult findTriangleSplitNode(
     {
       SplitNode const& leftSplit = treeData.splitNodes[idxL - 1];
       if (intersectsBoundingBox(ray, leftSplit.bb))
+      {
+        printf("LEFT INTERSECTS\n");
         stack.push(idxL);
+      }
+      else
+        printf("LEFT NO INTERSECTS\n");
     }
   }
 }
