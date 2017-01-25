@@ -2,24 +2,8 @@
 #define CUDA_TRIANGLES_KDTREESTRUCTURES_H
 
 #include "common/Structures.h"
-#include "common/Utils.h"
-#include "cudaTriangles/CuUtils.h"
 
 #include <vector_types.h>
-
-struct KdTreeData
-{
-  int treeRoot;
-
-  int trianglesNum;
-  Triangle* triangles;
-
-  int leafNodesNum;
-  LeafNode* leafNodes;
-
-  int splitNodesNum;
-  SplitNode* splitNodes;
-};
 
 // a leaf node in the kd-tree
 struct LeafNode
@@ -62,6 +46,20 @@ struct HitState
   float2 bestTriangleIndex;
   float thit;
   float globalTmax;
+};
+
+struct KdTreeData
+{
+  int treeRoot;
+
+  int trianglesNum;
+  Triangle* triangles;
+
+  int leafNodesNum;
+  LeafNode* leafNodes;
+
+  int splitNodesNum;
+  SplitNode* splitNodes;
 };
 
 #endif // CUDA_TRIANGLES_KDTREESTRUCTURES_H

@@ -81,20 +81,12 @@ __device__ Vector crossProduct(Vector const& a, Vector const& b)
   return vec;
 }
 
-__device__ void normalize(Point& vec)
+__device__ Point normalize(Point vec)
 {
   float len = vectorLen(vec);
   vec.x = vec.x / len;
   vec.y = vec.y / len;
   vec.z = vec.z / len;
-}
-
-__device__ Vector crossProduct(Vector const& a, Vector const& b)
-{
-  Vector vec;
-  vec.x = a.y * b.z - b.y * a.z;
-  vec.y = a.z * b.x - a.x * b.z;
-  vec.z = a.x * b.y - a.y * b.x;
   return vec;
 }
 
@@ -112,8 +104,8 @@ __device__ bool intersectsBoundingBox(Segment const& segment, BoundingBox const&
   float t5 = (box.vMin.z - segment.a.z) * dirfracZ;
   float t6 = (box.vMax.z - segment.a.z) * dirfracZ;
 
-  float tmin = std::max(std::max(std::min(t1, t2), std::min(t3, t4)), std::min(t5, t6));
-  float tmax = std::min(std::min(std::max(t1, t2), std::max(t3, t4)), std::max(t5, t6));
+  float tmin = fmaxf(fmaxf(fminf(t1, t2), fminf(t3, t4)), fminf(t5, t6));
+  float tmax = fminf(fminf(fmaxf(t1, t2), fmaxf(t3, t4)), fmaxf(t5, t6));
 
   return 0 <= tmax && tmin <= tmax;
 }

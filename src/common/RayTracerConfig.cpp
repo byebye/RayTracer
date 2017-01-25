@@ -74,24 +74,6 @@ Plane parsePlane(std::ifstream& file)
   return plane;
 }
 
-Point getMinPoint(Triangle const& tr)
-{
-  Point res;
-  res.x = std::min({tr.x.x, tr.y.x, tr.z.x});
-  res.y = std::min({tr.x.y, tr.y.y, tr.z.y});
-  res.z = std::min({tr.x.z, tr.y.z, tr.z.z});
-  return res;
-}
-
-Point getMaxPoint(Triangle const& tr)
-{
-  Point res;
-  res.x = std::max({tr.x.x, tr.y.x, tr.z.x});
-  res.y = std::max({tr.x.y, tr.y.y, tr.z.y});
-  res.z = std::max({tr.x.z, tr.y.z, tr.z.z});
-  return res;
-}
-
 } // anonymous namespace
 
 RayTracerConfig RayTracerConfig::fromFile(std::string const& path)

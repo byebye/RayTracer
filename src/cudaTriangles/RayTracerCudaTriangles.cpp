@@ -26,7 +26,7 @@ inline void cuAssert(CUresult code, const char* file, int line, bool abort = tru
 template <typename T>
 CUdeviceptr toDeviceCopy(T* data, size_t count)
 {
-  CUdeviceptr dataDev;
+  CUdeviceptr dataDev{};
   if (count > 0)
   {
     CU_CHECK(cuMemHostRegister(data, sizeof(T) * count, 0));

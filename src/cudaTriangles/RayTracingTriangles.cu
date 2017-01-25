@@ -24,7 +24,6 @@ struct pairip
 
 extern "C" {
 
-
 __device__ RGB processPixelOnBackground(BaseConfig* config)
 {
   return config->background;

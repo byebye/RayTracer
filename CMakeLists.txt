@@ -160,4 +160,6 @@ if (CUDA_FOUND)
       RayTracerCudaTriangles
       ${CUDA_TRIANGLES_SOURCE_FILES} ${CUDA_TRIANGLES_PTX_FILES} ${CUDA_TRIANGLES_HEADER_FILES})
 
+  target_link_libraries(RayTracerCudaTriangles "${CUDA_LIBRARIES}" cuda)
+
 endif ()
