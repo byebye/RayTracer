@@ -7,6 +7,20 @@
 
 #include <vector_types.h>
 
+struct KdTreeData
+{
+  int treeRoot;
+
+  int trianglesNum;
+  Triangle* triangles;
+
+  int leafNodesNum;
+  LeafNode* leafNodes;
+
+  int splitNodesNum;
+  SplitNode* splitNodes;
+};
+
 // a leaf node in the kd-tree
 struct LeafNode
 {
@@ -49,31 +63,5 @@ struct HitState
   float thit;
   float globalTmax;
 };
-
-// struct FindResult
-//{
-//  bool exists = false;
-//  Triangle triangle;
-//  Point point;
-//};
-//
-// struct KdTree
-//{
-//  BoundingBox bb;
-//
-//  FindResult find(Segment seg, Triangle const& excludedTriangle)
-//  {
-//    FindResult res{};
-//
-//    if (!intersectionBoundingBox(seg, bb))
-//      return res;
-//
-//    if (triangles.empty())
-//      return findRecursive(seg, excludedTriangle);
-//    else
-//      return findInTriangles(seg, excludedTriangle);
-//  }
-//};
-
 
 #endif // CUDA_TRIANGLES_KDTREESTRUCTURES_H

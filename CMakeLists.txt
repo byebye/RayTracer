@@ -130,12 +130,14 @@ if (CUDA_FOUND)
   set(CUDA_TRIANGLES_SOURCE_FILES
       src/cudaTriangles/main.cpp
       src/cudaTriangles/RayTracerCudaTriangles.cpp
+      src/cudaTriangles/KdTreeBuilder.cpp
       ${COMMON_SOURCE_FILES})
 
   set(CUDA_TRIANGLES_HEADER_FILES
       src/cudaTriangles/RayTracerCudaTriangles.h
       src/cudaTriangles/CuUtils.h
       src/cudaTriangles/KdTreeStructures.h
+      src/cudaTriangles/KdTreeBuilder.h
       ${COMMON_HEADER_FILES})
 
   set(CUDA_TRIANGLES_CU_FILES

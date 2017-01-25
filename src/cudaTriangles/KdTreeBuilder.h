@@ -7,26 +7,31 @@
 
 struct KdTreeBuilder
 {
-  KdTreeBuilder(int const leafTrianglesLimit)
+  KdTreeBuilder(int const leafTrianglesLimit = 16)
     : trianglesInLeafBound(leafTrianglesLimit)
   {
   }
 
   std::vector<SplitNode> splitNodes;
   std::vector<LeafNode> leafNodes;
-  std::vector<Triangle> outTriangles;
+  std::vector<Triangle> treeTriangles;
 
   void clear()
   {
     splitNodes.clear();
     leafNodes.clear();
-    outTriangles.clear();
+    treeTriangles.clear();
   }
 
-  int build(std::vector<Triangle> const& triangles, int parent, int depth = 0);
+  int build(std::vector<Triangle> const& triangles)
+  {
+    build(triangles, -1, 0);
+  }
 
 private:
   int const trianglesInLeafBound;
+
+  int build(std::vector<Triangle> const& triangles, int parent, int depth);
 
   int addLeaf(std::vector<Triangle> const& triangles, int parent);
 };

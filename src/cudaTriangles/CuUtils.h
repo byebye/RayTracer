@@ -98,7 +98,7 @@ __device__ Vector crossProduct(Vector const& a, Vector const& b)
   return vec;
 }
 
-__device__ bool intersectionBoundingBox(Segment const& segment, BoundingBox const& box)
+__device__ bool intersectsBoundingBox(Segment const& segment, BoundingBox const& box)
 {
   Vector dir = normalize(segment.b - segment.a);
   float dirfracX = 1.0f / dir.x;
@@ -116,6 +116,12 @@ __device__ bool intersectionBoundingBox(Segment const& segment, BoundingBox cons
   float tmax = std::min(std::min(std::max(t1, t2), std::max(t3, t4)), std::max(t5, t6));
 
   return 0 <= tmax && tmin <= tmax;
+}
+
+__device__ RGB calculateColorFromReflection(RGB currentColor, RGB reflectedColor,
+                                            float reflectionCoefficient)
+{
+  return currentColor * (1.0f - reflectionCoefficient) + reflectedColor * reflectionCoefficient;
 }
 };
 #endif // CUDA_TRIANGLES_CUUTILS_H
