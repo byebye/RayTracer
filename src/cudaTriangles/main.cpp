@@ -64,5 +64,5 @@ int main(int argc, char* argv[])
 
   RayTracerCudaTriangles tracer(config);
   tracer.processPixelsCuda();
-  tracer.printBitmap(std::cout);
+  // tracer.printBitmap(std::cout);
 }
