@@ -22,7 +22,7 @@ struct FindTriangleResult
 template<typename T>
 struct Stack
 {
-  size_t size;
+  size_t size = 0;
   T data[40];
 
   //Stack(size_t size)
@@ -88,7 +88,7 @@ __device__ FindTriangleResult findTriangleSplitNode(
 
   while (true)
   {
-    printf("IN STACK %ld\n", stack.size);
+    printf("IN STACK %lu\n", stack.size);
     if (stack.size == 0)
       return res;
     currentNode = treeData.splitNodes[stack.pop() - 1];
