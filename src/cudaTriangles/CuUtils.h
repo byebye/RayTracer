@@ -11,40 +11,33 @@
 
 #include "common/Structures.h"
 
-extern "C" {
-
-__device__ bool isCloseToZero(float x)
+__device__ inline Point& operator/=(Point& p, float value)
 {
-  return abs(x) < DBL_EPSILON;
+  p.x /= value;
+  p.y /= value;
+  p.z /= value;
+  return p;
 }
 
-__device__ RGB& operator*=(RGB& rgb, float times)
+__device__ inline Point operator/(Point p, float value)
 {
-  rgb.r *= times;
-  rgb.g *= times;
-  rgb.b *= times;
-  return rgb;
+  return p /= value;
 }
 
-__device__ RGB operator*(RGB rgb, float times)
+__device__ inline Point& operator*=(Point& p, float value)
 {
-  return rgb *= times;
+  p.x *= value;
+  p.y *= value;
+  p.z *= value;
+  return p;
 }
 
-__device__ RGB& operator+=(RGB& lhs, RGB rhs)
+__device__ inline Point operator*(Point p, float value)
 {
-  lhs.r += rhs.r;
-  lhs.g += rhs.g;
-  lhs.b += rhs.b;
-  return lhs;
+  return p *= value;
 }
 
-__device__ RGB operator+(RGB lhs, RGB rhs)
-{
-  return lhs += rhs;
-}
-
-__device__ Point& operator-=(Point& a, Point const& b)
+__device__ inline Point& operator-=(Point& a, Point const& b)
 {
   a.x -= b.x;
   a.y -= b.y;
@@ -52,9 +45,55 @@ __device__ Point& operator-=(Point& a, Point const& b)
   return a;
 }
 
-__device__ Point operator-(Point a, Point const& b)
+__device__ inline Point operator-(Point a, Point const& b)
 {
   return a -= b;
+}
+
+__device__ inline Point& operator+=(Point& a, Point const& b)
+{
+  a.y += b.y;
+  a.z += b.z;
+  a.x += b.x;
+  return a;
+}
+
+__device__ inline Point operator+(Point a, Point const& b)
+{
+  return a += b;
+}
+
+__device__ inline RGB& operator*=(RGB& rgb, float times)
+{
+  rgb.r *= times;
+  rgb.g *= times;
+  rgb.b *= times;
+  return rgb;
+}
+
+__device__ inline RGB operator*(RGB rgb, float times)
+{
+  return rgb *= times;
+}
+
+__device__ inline RGB& operator+=(RGB& lhs, RGB rhs)
+{
+  lhs.r += rhs.r;
+  lhs.g += rhs.g;
+  lhs.b += rhs.b;
+  return lhs;
+}
+
+__device__ inline RGB operator+(RGB lhs, RGB rhs)
+{
+  return lhs += rhs;
+}
+
+extern "C" {
+
+__device__ bool isCloseToZero(float x)
+{
+  return abs(x) < DBL_EPSILON;
 }
 
 __device__ float distance(Point const& a, Point const& b)
@@ -114,6 +153,112 @@ __device__ RGB calculateColorFromReflection(RGB currentColor, RGB reflectedColor
                                             float reflectionCoefficient)
 {
   return currentColor * (1.0f - reflectionCoefficient) + reflectedColor * reflectionCoefficient;
+}
+
+// We assume point is on triangle
+__device__ RGB colorOfPoint(Point const& point, Triangle const& triangle)
+{
+  float u;
+  float v;
+
+  Point v0 = triangle.x;
+  Point v1 = triangle.y;
+  Point v2 = triangle.z;
+
+  Vector v0v1 = v1 - v0;
+  Vector v0v2 = v2 - v0;
+
+  Vector N = crossProduct(v0v1, v0v2);
+  float denom = dotProduct(N, N);
+
+  Vector C;
+
+  Vector edge1 = v2 - v1;
+  Vector vp1 = point - v1;
+  C = crossProduct(edge1, vp1);
+  u = dotProduct(N, C);
+
+  Vector edge2 = v0 - v2;
+  Vector vp2 = point - v2;
+  C = crossProduct(edge2, vp2);
+  v = dotProduct(N, C);
+
+  u /= denom;
+  v /= denom;
+
+  return triangle.colorX * u + triangle.colorY * v + triangle.colorZ * (1 - u - v);
+}
+
+__device__ Segment reflection(Segment const& segment, Triangle const& triangle)
+{
+  Vector ri = segment.b - segment.a;
+  Point v0 = triangle.x;
+  Point v1 = triangle.y;
+  Point v2 = triangle.z;
+
+  Vector v0v1 = v1 - v0;
+  Vector v0v2 = v2 - v0;
+
+  Vector N = normalize(crossProduct(v0v1, v0v2));
+
+  ri -= N * (2 * dotProduct(ri, N));
+  return {segment.b, segment.b + ri};
+}
+
+struct pairip
+{
+  int first;
+  Point second;
+};
+
+struct IntersectionResult
+{
+  bool intersects;
+  Point intersectionPoint;
+};
+
+__device__ IntersectionResult intersection(Segment const& segment, Triangle const& triangle)
+{
+  Vector const& V1 = triangle.x;
+  Vector const& V2 = triangle.y;
+  Vector const& V3 = triangle.z;
+
+  Vector const& O = segment.a;
+  Vector const& D = normalize(segment.b - segment.a);
+
+  Vector e1, e2;
+  Vector P, Q, T;
+  float det, inv_det, u, v;
+
+  e1 = V2 - V1;
+  e2 = V3 - V1;
+
+  P = crossProduct(D, e2);
+  det = dotProduct(e1, P);
+
+  if (isCloseToZero(det))
+    return {false, {}};
+
+  inv_det = 1.f / det;
+  T = O - V1;
+  u = dotProduct(T, P) * inv_det;
+  if (u < 0.f || u > 1.f)
+    return {false, {}};
+
+  Q = crossProduct(T, e1);
+  v = dotProduct(D, Q) * inv_det;
+
+  if (v < 0.f || u + v > 1.f)
+    return {false, {}};
+
+  float t = dotProduct(e2, Q) * inv_det;
+  if (t > FLT_EPSILON)
+  {
+    Point res = segment.a + D * t;
+    return {true, res};
+  }
+
+  return {false, {}};
 }
 };
 #endif // CUDA_TRIANGLES_CUUTILS_H

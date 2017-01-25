@@ -102,7 +102,7 @@ int KdTreeBuilder::addLeaf(std::vector<Triangle> const& triangles, int parent)
 {
   leafNodes.emplace_back();
   LeafNode& leaf = leafNodes.back();
-  leaf.parent = parent;
+  // leaf.parent = parent;
   leaf.firstTriangle = static_cast<int>(treeTriangles.size());
   leaf.triangleCount = static_cast<int>(triangles.size());
   treeTriangles.insert(treeTriangles.end(), triangles.begin(), triangles.end());

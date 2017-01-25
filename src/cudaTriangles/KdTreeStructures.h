@@ -10,7 +10,7 @@ struct LeafNode
 {
   int triangleCount;
   int firstTriangle;
-  int parent;
+  // int parent;
 };
 
 // an internal node in the kd-tree
@@ -24,29 +24,29 @@ struct SplitNode
 };
 
 // Per ray traversal state
-
-struct TraversalState
-{
-  float2 nodePointer;
-  float tmin;
-  float tmax;
-  // sign bits store node type (leaf, split)
-  // and ray state (traverse, intersect, done)
-};
-
-struct IntersectState
-{
-  float2 triangleIndex;
-  float triangleCount;
-  float tmax;
-};
-
-struct HitState
-{
-  float2 bestTriangleIndex;
-  float thit;
-  float globalTmax;
-};
+//
+// struct TraversalState
+//{
+//  float2 nodePointer;
+//  float tmin;
+//  float tmax;
+//  // sign bits store node type (leaf, split)
+//  // and ray state (traverse, intersect, done)
+//};
+//
+// struct IntersectState
+//{
+//  float2 triangleIndex;
+//  float triangleCount;
+//  float tmax;
+//};
+//
+// struct HitState
+//{
+//  float2 bestTriangleIndex;
+//  float thit;
+//  float globalTmax;
+//};
 
 struct KdTreeData
 {

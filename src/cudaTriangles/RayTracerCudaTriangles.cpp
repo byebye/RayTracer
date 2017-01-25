@@ -68,7 +68,8 @@ void RayTracerCudaTriangles::processPixelsCuda()
   assert(root != 0);
 
   RGB* bitmapTab = bitmap.data();
-  CUdeviceptr bitmapDev = toDeviceCopy(bitmapTab, bitmap.size());
+  CUdeviceptr bitmapDev;
+  CU_CHECK(cuMemAlloc(&bitmapDev, sizeof(RGB) * (bitmap.size())));
 
   int trianglesNum = treeBuilder.treeTriangles.size();
   Triangle* trianglesTab = treeBuilder.treeTriangles.data();
@@ -97,8 +98,8 @@ void RayTracerCudaTriangles::processPixelsCuda()
 
   CU_CHECK(cuLaunchKernel(computePixel, blocksX, blocksY, 1, threadsX, threadsY, 1, 0, 0, args, 0));
 
+  CU_CHECK(cuMemHostRegister(bitmapTab, sizeof(RGB) * bitmap.size(), 0));
   CU_CHECK(cuMemcpyDtoH(bitmapTab, bitmapDev, sizeof(RGB) * bitmap.size()));
-
   CU_CHECK(cuMemHostUnregister(bitmapTab));
 
   if (trianglesNum != 0)
