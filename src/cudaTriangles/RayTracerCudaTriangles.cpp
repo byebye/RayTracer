@@ -90,11 +90,11 @@ void RayTracerCudaTriangles::processPixelsCuda()
   void* args[] = {&bitmapDev,    &baseConfig,   &root,          &trianglesNum, &trianglesDev,
                   &leafNodesNum, &leafNodesDev, &splitNodesNum, &splitNodesDev};
 
-  int threadsNum = 2;
+  int threadsNum = 16;
   int threadsX = threadsNum;
   int threadsY = threadsNum;
-  int blocksX = 1; //(bitmap.rows + threadsNum - 1) / threadsX;
-  int blocksY = 1; //(bitmap.cols + threadsNum - 1) / threadsY;
+  int blocksX = (bitmap.rows + threadsNum - 1) / threadsX;
+  int blocksY = (bitmap.cols + threadsNum - 1) / threadsY;
 
   CU_CHECK(cuLaunchKernel(computePixel, blocksX, blocksY, 1, threadsX, threadsY, 1, 0, 0, args, 0));
 

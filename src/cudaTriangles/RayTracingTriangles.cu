@@ -88,7 +88,7 @@ __device__ FindTriangleResult findTriangleSplitNode(
 
   while (true)
   {
-    printf("IN STACK %lu\n", stack.size);
+    //printf("IN STACK %lu\n", stack.size);
     if (stack.size == 0)
       return res;
     currentNode = treeData.splitNodes[stack.pop() - 1];
@@ -156,7 +156,7 @@ __device__  RGB calculateColorInLight(Point const& pointOnTriangle, Triangle con
 __device__ RGB
 processPixel(Segment const& ray, KdTreeData const& treeData, BaseConfig const& config, int recursionLevel = 0)
 {
-  printf("PROCESS\n");
+  //printf("PROCESS\n");
   FindTriangleResult triangleIntersec;
   if (treeData.treeRoot < 0)
     triangleIntersec = findTriangleLeafNode(treeData.treeRoot, ray, -1, treeData);
@@ -212,7 +212,7 @@ __global__ void computePixel(RGB* bitmap,
   treeData.splitNodes = splitNodes;
   treeData.splitNodesNum = splitNodesNum;
 
-  printf("RUNNING %d, %d\n", thidX, thidY);
+  //printf("RUNNING %d, %d\n", thidX, thidY);
 
   if (thidX < 2 * config.imageY && thidY < 2 * config.imageZ)
   {
