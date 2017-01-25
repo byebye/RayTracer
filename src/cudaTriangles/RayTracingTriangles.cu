@@ -19,27 +19,17 @@ struct FindTriangleResult
   Point point;
 };
 
-template<typename T>
 struct Stack
 {
   size_t size = 0;
-  T data[40];
+  int data[40];
 
-  //Stack(size_t size)
-  //    : size(size), data(new T[size])
-  //{}
-
-  //~Stack()
-  //{
-  //  delete [] data;
-  //}
-
-  __device__ void push(T const& t)
+  __device__ void push(int const& t)
   {
     data[size++] = t;
   }
 
-  __device__ T pop()
+  __device__ int pop()
   {
     return data[--size];
   }
@@ -83,7 +73,7 @@ __device__ FindTriangleResult findTriangleSplitNode(
 
   SplitNode currentNode;
 
-  Stack<int> stack;
+  Stack stack;
   stack.push(nodeIdx);
 
   while (true)
@@ -92,20 +82,6 @@ __device__ FindTriangleResult findTriangleSplitNode(
     if (stack.size == 0)
       return res;
     currentNode = treeData.splitNodes[stack.pop() - 1];
-
-    int idxR = currentNode.rightChild;
-    if (idxR < 0)
-    {
-      FindTriangleResult resR = findTriangleLeafNode(idxR, ray, excludedTriangle, treeData);
-      if (resR.exists && resR.dist < res.dist)
-        res = resR;
-    }
-    else if (idxR > 0)
-    {
-      SplitNode const& rightSplit = treeData.splitNodes[idxR - 1];
-      if (intersectsBoundingBox(ray, rightSplit.bb))
-        stack.push(idxR);
-    }
 
     int idxL = currentNode.leftChild;
     if (idxL < 0)
@@ -119,6 +95,20 @@ __device__ FindTriangleResult findTriangleSplitNode(
       SplitNode const& leftSplit = treeData.splitNodes[idxL - 1];
       if (intersectsBoundingBox(ray, leftSplit.bb))
         stack.push(idxL);
+    }
+
+    int idxR = currentNode.rightChild;
+    if (idxR < 0)
+    {
+      FindTriangleResult resR = findTriangleLeafNode(idxR, ray, excludedTriangle, treeData);
+      if (resR.exists && resR.dist < res.dist)
+        res = resR;
+    }
+    else if (idxR > 0)
+    {
+      SplitNode const& rightSplit = treeData.splitNodes[idxR - 1];
+      if (intersectsBoundingBox(ray, rightSplit.bb))
+        stack.push(idxR);
     }
   }
 }

@@ -62,7 +62,7 @@ void RayTracerCudaTriangles::processPixelsCuda()
     exit(code);
   }
 
-  KdTreeBuilder treeBuilder(20);
+  KdTreeBuilder treeBuilder(5000);
 
   int root = treeBuilder.build(config.triangles);
   assert(root != 0);

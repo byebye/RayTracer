@@ -2,6 +2,7 @@
 
 #include "common/Utils.h"
 #include <algorithm>
+#include <cassert>
 #include <vector>
 
 static BoundingBox getBoundBoxForTriangles(std::vector<Triangle> const& triangles)
@@ -45,6 +46,7 @@ static float getSplitValue(BoundingBox const& bb, int const axis)
     case 2:
       return (bb.vMax.z + bb.vMin.z) / 2;
   }
+  assert(false);
   return 0;
 }
 
@@ -59,6 +61,7 @@ static bool goesLeft(Triangle const& triangle, int const axis, float const split
     case 2:
       return getMinPoint(triangle).z < splitValue;
   }
+  assert(false);
   return false;
 }
 
@@ -84,7 +87,6 @@ int KdTreeBuilder::build(std::vector<Triangle> const& triangles, int parent, int
 
   if (leftTrs.empty() || rightTrs.empty())
     return addLeaf(triangles, parent);
-
 
   int const nodeIdx = static_cast<int>(splitNodes.size()) + 1;
 
