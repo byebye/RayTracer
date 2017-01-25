@@ -18,15 +18,15 @@ struct KdTreeBuilder
 
   int build(std::vector<Triangle> const& triangles)
   {
-    return build(triangles, -1, 0);
+    return build(triangles, 0);
   }
 
 private:
   size_t const trianglesInLeafBound;
 
-  int build(std::vector<Triangle> const& triangles, int parent, int depth);
+  int build(std::vector<Triangle> const& triangles, int depth);
 
-  int addLeaf(std::vector<Triangle> const& triangles, int parent);
+  int addLeaf(std::vector<Triangle> const& triangles);
 };
 
 

@@ -3,8 +3,8 @@
 
 #include "common/RayTracerConfig.h"
 #include "common/Structures.h"
-#include "cudaTriangles/RayTracerCudaTriangles.h"
 #include "common/StructuresOperators.h"
+#include "cudaTriangles/RayTracerCudaTriangles.h"
 
 int main(int argc, char* argv[])
 {

@@ -65,13 +65,13 @@ static bool goesLeft(Triangle const& triangle, int const axis, float const split
   return false;
 }
 
-int KdTreeBuilder::build(std::vector<Triangle> const& triangles, int parent, int depth)
+int KdTreeBuilder::build(std::vector<Triangle> const& triangles, int depth)
 {
   if (triangles.size() == 0)
     return 0; // valid index is either negative or positive, see SplitNode
 
   if (triangles.size() < trianglesInLeafBound)
-    return addLeaf(triangles, parent);
+    return addLeaf(triangles);
 
   int const axis = depth % 3;
   BoundingBox const bb = getBoundBoxForTriangles(triangles);
@@ -86,25 +86,23 @@ int KdTreeBuilder::build(std::vector<Triangle> const& triangles, int parent, int
                                          : rightTrs.push_back(triangle);
 
   if (leftTrs.empty() || rightTrs.empty())
-    return addLeaf(triangles, parent);
+    return addLeaf(triangles);
 
   splitNodes.emplace_back();
   int const nodeIdx = static_cast<int>(splitNodes.size()) - 1;
 
   splitNodes[nodeIdx].bb = bb;
-  splitNodes[nodeIdx].splitValue = splitValue;
-  int left = build(leftTrs, nodeIdx, depth + 1);
-  int right = build(rightTrs, nodeIdx, depth + 1);
+  int left = build(leftTrs, depth + 1);
+  int right = build(rightTrs, depth + 1);
   splitNodes[nodeIdx].leftChild = left;
   splitNodes[nodeIdx].rightChild = right;
 
   return nodeIdx + 1;
 }
 
-int KdTreeBuilder::addLeaf(std::vector<Triangle> const& triangles, int parent)
+int KdTreeBuilder::addLeaf(std::vector<Triangle> const& triangles)
 {
   LeafNode leaf;
-  // leaf.parent = parent;
   leaf.firstTriangle = static_cast<int>(treeTriangles.size());
   leaf.triangleCount = static_cast<int>(triangles.size());
   treeTriangles.insert(treeTriangles.end(), triangles.begin(), triangles.end());
