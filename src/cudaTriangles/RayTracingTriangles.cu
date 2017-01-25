@@ -46,6 +46,9 @@ __device__ FindTriangleResult findTriangleLeafNode(
 
   LeafNode const leafNode = treeData.leafNodes[-leafIdx - 1];
 
+  if (leafNode.triangleCount == 0)
+    printf("ERROR, NO TRIANGLES IN LEAF\n");
+
   for (int i = leafNode.firstTriangle; i < leafNode.firstTriangle + leafNode.triangleCount; ++i)
   {
     if (i == excludedTriangle)
@@ -83,20 +86,6 @@ __device__ FindTriangleResult findTriangleSplitNode(
       return res;
     currentNode = treeData.splitNodes[stack.pop() - 1];
 
-    int idxL = currentNode.leftChild;
-    if (idxL < 0)
-    {
-      FindTriangleResult resL = findTriangleLeafNode(idxL, ray, excludedTriangle, treeData);
-      if (resL.exists && resL.dist < res.dist)
-        res = resL;
-    }
-    else if (idxL > 0)
-    {
-      SplitNode const& leftSplit = treeData.splitNodes[idxL - 1];
-      if (intersectsBoundingBox(ray, leftSplit.bb))
-        stack.push(idxL);
-    }
-
     int idxR = currentNode.rightChild;
     if (idxR < 0)
     {
@@ -109,6 +98,20 @@ __device__ FindTriangleResult findTriangleSplitNode(
       SplitNode const& rightSplit = treeData.splitNodes[idxR - 1];
       if (intersectsBoundingBox(ray, rightSplit.bb))
         stack.push(idxR);
+    }
+
+    int idxL = currentNode.leftChild;
+    if (idxL < 0)
+    {
+      FindTriangleResult resL = findTriangleLeafNode(idxL, ray, excludedTriangle, treeData);
+      if (resL.exists && resL.dist < res.dist)
+        res = resL;
+    }
+    else if (idxL > 0)
+    {
+      SplitNode const& leftSplit = treeData.splitNodes[idxL - 1];
+      if (intersectsBoundingBox(ray, leftSplit.bb))
+        stack.push(idxL);
     }
   }
 }
@@ -211,8 +214,12 @@ __global__ void computePixel(RGB* bitmap,
                 static_cast<float>(thidY - config.imageZ) / config.antiAliasing};
 
     Segment ray{config.observer, pixel};
-    int idx = thidX * config.imageZ * 2 + thidY;
-    bitmap[idx] = processPixel(ray, treeData, config);
+    if (thidX == 380 && thidY == 500)
+    {
+      int idx = thidX * config.imageZ * 2 + thidY;
+      bitmap[idx] = processPixel(ray, treeData, config);
+      printf("PIXEL %d %d %d\n", bitmap[idx].r, bitmap[idx].g, bitmap[idx].b);
+    }
   }
 }
 
