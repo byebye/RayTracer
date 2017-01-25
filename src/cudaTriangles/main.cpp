@@ -4,6 +4,8 @@
 #include "common/RayTracerConfig.h"
 #include "common/Structures.h"
 #include "cudaTriangles/RayTracerCudaTriangles.h"
+//#include "KdTreeBuilder.h"
+//#include "common/StructuresOperators.h"
 
 int main(int argc, char* argv[])
 {
@@ -62,8 +64,23 @@ int main(int argc, char* argv[])
       config.triangles.push_back(triangle);
     }
   }
+  //{
+  //  KdTreeBuilder treeBuilder(500);
+  //
+  //  int root = treeBuilder.build(config.triangles);
+  //  std::cout << treeBuilder.splitNodes.size() << '\n';
+  //  std::cout << treeBuilder.leafNodes.size() << '\n';
+  //  std::cout << treeBuilder.treeTriangles.size() << '\n';
+  //
+  //  std::cout << "ROOT " << root << '\n';
+  //
+  //    SplitNode s = treeBuilder.splitNodes[root - 1];
+  //    std::cout << s.leftChild << " " << s.rightChild << std::endl;
+  //    std::cout << s.bb.vMin << " " << s.bb.vMax << std::endl;
+  //
+  //}
 
   RayTracerCudaTriangles tracer(config);
   tracer.processPixelsCuda();
-  // tracer.printBitmap(std::cout);
+  tracer.printBitmap(std::cout);
 }

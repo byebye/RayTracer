@@ -88,16 +88,22 @@ int KdTreeBuilder::build(std::vector<Triangle> const& triangles, int parent, int
   if (leftTrs.empty() || rightTrs.empty())
     return addLeaf(triangles, parent);
 
-  int const nodeIdx = static_cast<int>(splitNodes.size()) + 1;
+  splitNodes.emplace_back();
+  int const nodeIdx = static_cast<int>(splitNodes.size()) - 1;
 
-  SplitNode node;
-  node.bb = bb;
-  node.splitValue = splitValue;
-  node.leftChild = build(leftTrs, nodeIdx - 1, depth + 1);
-  node.rightChild = build(rightTrs, nodeIdx - 1, depth + 1);
-  splitNodes.push_back(node);
+  splitNodes[nodeIdx].bb = bb;
+  splitNodes[nodeIdx].splitValue = splitValue;
+  int left = build(leftTrs, nodeIdx, depth + 1);
+  int right = build(rightTrs, nodeIdx, depth + 1);
+  splitNodes[nodeIdx].leftChild = left;
+  splitNodes[nodeIdx].rightChild = right;
 
-  return nodeIdx;
+  // splitNodes[nodeIdx].leftChild = build(leftTrs, nodeIdx - 1, depth + 1);
+  // splitNodes[nodeIdx].rightChild = build(rightTrs, nodeIdx - 1, depth + 1);
+  // std::cout << "SPLIT: " << nodeIdx << " l: " << left << " r: " << splitNodes[nodeIdx].rightChild
+  // << std::endl;
+  // std::cout << "RETURN " << nodeIdx + 1 << '\n';
+  return nodeIdx + 1;
 }
 
 int KdTreeBuilder::addLeaf(std::vector<Triangle> const& triangles, int parent)
@@ -108,5 +114,6 @@ int KdTreeBuilder::addLeaf(std::vector<Triangle> const& triangles, int parent)
   leaf.triangleCount = static_cast<int>(triangles.size());
   treeTriangles.insert(treeTriangles.end(), triangles.begin(), triangles.end());
   leafNodes.push_back(leaf);
+  // std::cout << "LEAF: " << -static_cast<int>(leafNodes.size()) << '\n';
   return -static_cast<int>(leafNodes.size()); // leaf nodes have negative indices
 }
