@@ -1,5 +1,4 @@
 #include <cfloat>
-#include <cstdio>
 #include <cstdint>
 
 #include <host_defines.h>
@@ -145,7 +144,6 @@ __device__  RGB calculateColorInLight(Point const& pointOnTriangle, Triangle con
 __device__ RGB
 processPixel(Segment const& ray, KdTreeData const& treeData, BaseConfig const& config, int recursionLevel = 0)
 {
-  //printf("PROCESS\n");
   FindTriangleResult triangleIntersec;
   if (treeData.treeRoot < 0)
     triangleIntersec = findTriangleLeafNode(treeData.treeRoot, ray, -1, treeData);
@@ -200,8 +198,6 @@ __global__ void computePixel(RGB* bitmap,
   treeData.leafNodesNum = leafNodesNum;
   treeData.splitNodes = splitNodes;
   treeData.splitNodesNum = splitNodesNum;
-
-  //printf("RUNNING %d, %d\n", thidX, thidY);
 
   if (thidX < 2 * config.imageY && thidY < 2 * config.imageZ)
   {
