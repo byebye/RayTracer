@@ -85,26 +85,26 @@ int KdTreeBuilder::build(std::vector<Triangle> const& triangles, int parent, int
   if (leftTrs.empty() || rightTrs.empty())
     return addLeaf(triangles, parent);
 
-  splitNodes.emplace_back();
-  SplitNode& node = splitNodes.back();
 
-  int const nodeIdx = static_cast<int>(splitNodes.size());
+  int const nodeIdx = static_cast<int>(splitNodes.size()) + 1;
 
+  SplitNode node;
   node.bb = bb;
   node.splitValue = splitValue;
   node.leftChild = build(leftTrs, nodeIdx - 1, depth + 1);
   node.rightChild = build(rightTrs, nodeIdx - 1, depth + 1);
+  splitNodes.push_back(node);
 
   return nodeIdx;
 }
 
 int KdTreeBuilder::addLeaf(std::vector<Triangle> const& triangles, int parent)
 {
-  leafNodes.emplace_back();
-  LeafNode& leaf = leafNodes.back();
+  LeafNode leaf;
   // leaf.parent = parent;
   leaf.firstTriangle = static_cast<int>(treeTriangles.size());
   leaf.triangleCount = static_cast<int>(triangles.size());
   treeTriangles.insert(treeTriangles.end(), triangles.begin(), triangles.end());
+  leafNodes.push_back(leaf);
   return -static_cast<int>(leafNodes.size()); // leaf nodes have negative indices
 }

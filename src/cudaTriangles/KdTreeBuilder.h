@@ -16,13 +16,6 @@ struct KdTreeBuilder
   std::vector<LeafNode> leafNodes;
   std::vector<Triangle> treeTriangles;
 
-  void clear()
-  {
-    splitNodes.clear();
-    leafNodes.clear();
-    treeTriangles.clear();
-  }
-
   int build(std::vector<Triangle> const& triangles)
   {
     return build(triangles, -1, 0);
