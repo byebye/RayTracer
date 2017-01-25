@@ -54,13 +54,13 @@ __device__ FindTriangleResult findTriangleLeafNode(
 
   res.dist = FLT_MAX;
 
-  LeafNode leafNode = treeData.leafNodes[-leafIdx - 1];
+  LeafNode const leafNode = treeData.leafNodes[-leafIdx - 1];
 
   for (int i = leafNode.firstTriangle; i < leafNode.firstTriangle + leafNode.triangleCount; ++i)
   {
     if (i == excludedTriangle)
       continue;
-    IntersectionResult const& intersec = intersection(ray, treeData.triangles[i]);
+    IntersectionResult const intersec = intersection(ray, treeData.triangles[i]);
 
     float dist = distance(ray.a, intersec.intersectionPoint);
     if (intersec.intersects && dist < res.dist)
@@ -88,6 +88,8 @@ __device__ FindTriangleResult findTriangleSplitNode(
 
   while (true)
   {
+    fprintf(stderr, "IN STACK %ld\n", stack.size);
+    fflush(stderr);
     if (stack.size == 0)
       return res;
     currentNode = treeData.splitNodes[stack.pop() - 1];
@@ -155,6 +157,8 @@ __device__  RGB calculateColorInLight(Point const& pointOnTriangle, Triangle con
 __device__ RGB
 processPixel(Segment const& ray, KdTreeData const& treeData, BaseConfig const& config, int recursionLevel = 0)
 {
+  fprintf(stderr, "PROCESS\n");
+  fflush(stderr);
   FindTriangleResult triangleIntersec;
   if (treeData.treeRoot < 0)
     triangleIntersec = findTriangleLeafNode(treeData.treeRoot, ray, -1, treeData);
@@ -209,6 +213,9 @@ __global__ void computePixel(RGB* bitmap,
   treeData.leafNodesNum = leafNodesNum;
   treeData.splitNodes = splitNodes;
   treeData.splitNodesNum = splitNodesNum;
+
+  fprintf(stderr, "RUNNING %d, %d\n", thidX, thidY);
+  fflush(stderr);
 
   if (thidX < 2 * config.imageY && thidY < 2 * config.imageZ)
   {
